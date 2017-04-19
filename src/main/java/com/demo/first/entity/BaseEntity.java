@@ -1,7 +1,8 @@
 package com.demo.first.entity;
 
 /**
- * Created by zhangry on 2017/4/18.
+ * 实体基础类
  */
 public class BaseEntity {
+
 }

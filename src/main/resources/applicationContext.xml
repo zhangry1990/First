@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+   	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!--引入外部属性文件-->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	
+	<!-- AOP -->
+	<!--<aop:aspectj-autoproxy/>-->
+	
+	<!-- 包扫描 -->
+	<!--<context:component-scan base-package="com">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>-->
+	
+	
+	<!-- 配置c3p0连接池 -->
+	<!-- <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean> -->
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClass}"/>
+		<property name="Url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	
+	
+	<!-- Hibernate Session配置 -->
+	<!--<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+				<prop key="hibernate.cache.use_query_cache">false</prop>
+				<prop key="current_session_context_class">thread</prop>
+				&lt;!&ndash; 使用的是Spring的事务管理 &ndash;&gt;
+				<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+			</props>
+		</property>
+		<property name="packagesToScan">
+			<list>
+				<value>com.zhangry.ssh..entity</value>
+			</list>
+		
+		</property>
+	</bean>-->
+	
+	
+	<!-- 事务管理 -->
+	<!--<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>	
+	</bean>-->
+	
+	
+	<!-- 事物Advice -->
+	<!--<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" propagation="REQUIRED"/>
+			<tx:method name="list*" read-only="true" propagation="REQUIRED"/>
+			<tx:method name="find*" read-only="true" propagation="REQUIRED"/>
+			<tx:method name="*" propagation="REQUIRED" rollback-for="Exception"/>
+		</tx:attributes>
+	</tx:advice>-->
+	
+	<!-- 配置切面 --><!-- proxy-target-class=true表示使用CGLIB代理和@AspectJ自动代理支持 -->
+	<!--<aop:config proxy-target-class="true">
+		&lt;!&ndash; 配置切入点 &ndash;&gt;
+		<aop:advisor pointcut="execution(* com.zhangry.ssh.service..*(..))" advice-ref="txAdvice"/>
+	</aop:config>-->
+	
+	<!-- 配置业务层的类 -->
+	<!-- <bean id="accountService" class="com.zhangry.spring.demo.AccountServiceImpl">
+		<property name="accountDao" ref="accountDao"/>
+	</bean>
+	
+	配置持久层的类
+	<bean id="accountDao" class="com.zhangry.spring.demo.AccountDaoImpl">
+		注入连接池，创建jdbc模板
+		<property name="dataSource" ref="dataSource"/>
+	</bean> -->
+	<bean id="customerDao" class="com.demo.first.dao.impl.CustomerDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="userBean" class="com.demo.first.entity.User">
+		<property name="name" value="abcd" />
+	</bean>
+</beans>
