@@ -1,7 +1,7 @@
 package com.demo.first.controller;
 
 /**
- * Created by zhangry on 2017/4/18.
+ * 控制类基类
  */
-public class BaseController {
+public abstract class BaseController {
 }

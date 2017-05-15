@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath:applicationContext.xml")
 public class DemoTest {
 
-    @Test
+    /*@Test
     public void xmlTest() {
         ApplicationContext context = new FileSystemXmlApplicationContext("classpath:applicationContext.xml");
         User user = (User) context.getBean("userBean");
@@ -33,5 +33,5 @@ public class DemoTest {
 
         Customer customer1 = customerDao.findByCustomerId(4);
         System.out.println(customer1.getName());
-    }
+    }*/
 }
