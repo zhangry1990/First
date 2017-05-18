@@ -6,9 +6,11 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
-    <link type="text/css" rel="stylesheet" href="../css/login.signin.css" />
+    <link type="text/css" rel="stylesheet" href="${ctx}/css/login/signin.css" />
     <title>用户登录/注册</title>
     <style type="text/css">
         .login {
@@ -28,7 +30,7 @@
 </head>
 <body class="login">
 <div class="content">
-    <form action="http://localhost:8080/demo/base/signin" method="get">
+    <form action="${ctx}/login/default" method="post">
         <h3>用户登录</h3>
         <div>
             <label>用户名</label>
@@ -41,7 +43,7 @@
             <label>密码</label>
             <div class="input-icon">
                 <i></i>
-                <input type="password" name="password" id="password" size="25" placeholder="密码" />
+                <input type="password" name="password" id="password" placeholder="密码" />
             </div>
         </div>
         <div>
