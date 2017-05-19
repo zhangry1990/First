@@ -1,280 +1,102 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: zhangry
-  Date: 2017/5/18
-  Time: 16:37
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
-    <title>Bootstrap Table Examples</title>
-    <link rel="stylesheet" href="${ctx}/css/bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="${ctx}/css/bootstrap/table/bootstrap-table.css">
-    <link rel="stylesheet" href="//rawgit.com/vitalets/x-editable/master/dist/bootstrap3-editable/css/bootstrap-editable.css">
-    <link rel="stylesheet" href="assets/examples.css">
+    <meta name="viewport" content="width=device-width" />
+    <title>BootStrap Table使用</title>
     <script src="${ctx}/js/jquery/jquery-3.2.1.min.js"></script>
-    <script src="${ctx}/js/bootstrap/bootstrap.min.js"></script>
-    <script src="ga.js"></script>
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/json2/20140204/json2.min.js"></script>
-    <![endif]-->
+    <script src="${ctx}/js/bootstrap/bootstrap.js"></script>
+    <link href="${ctx}/css/bootstrap/bootstrap.css" rel="stylesheet" />
+    <script src="${ctx}/js/bootstrap/table/bootstrap-table.js"></script>
+    <link href="${ctx}/css/bootstrap/table/bootstrap-table.css" rel="stylesheet" />
+    <script src="${ctx}/js/bootstrap/table/bootstrap-table-zh-CN.js"></script>
+    <%--<script src="${ctx}/js/modules/table/tablePage.js"></script>--%>
 </head>
 <body>
-<div class="container">
-    <h1>Bootstrap Table Examples <a href="https://github.com/wenzhixin/bootstrap-table-examples" class="btn btn-primary" role="button" target="_blank">Learn more &raquo;</a></h1>
-    <div id="toolbar">
-        <button id="remove" class="btn btn-danger" disabled>
-            <i class="glyphicon glyphicon-remove"></i> Delete
+<div class="panel-body" style="padding-bottom:0px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">查询条件</div>
+        <div class="panel-body">
+            <form id="formSearch" class="form-horizontal">
+                <div class="form-group" style="margin-top:15px">
+                    <label class="control-label col-sm-1" for="txt_search_departmentname">部门名称</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="txt_search_departmentname">
+                    </div>
+                    <label class="control-label col-sm-1" for="txt_search_statu">状态</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="txt_search_statu">
+                    </div>
+                    <div class="col-sm-4" style="text-align:left;">
+                        <button type="button" style="margin-left:50px" id="btn_query" class="btn btn-primary">查询</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toolbar" class="btn-group">
+        <button id="btn_add" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+        </button>
+        <button id="btn_edit" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+        </button>
+        <button id="btn_delete" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
         </button>
     </div>
-    <div>
-        <table id="table"
-               data-toolbar="#toolbar"
-               data-search="true"
-               data-show-refresh="true"
-               data-show-toggle="true"
-               data-show-columns="true"
-               data-show-export="true"
-               data-detail-view="true"
-               data-detail-formatter="detailFormatter"
-               data-minimum-count-columns="2"
-               data-show-pagination-switch="true"
-               data-pagination="true"
-               data-id-field="id"
-               data-page-list="[10, 25, 50, 100, ALL]"
-               data-show-footer="false"
-               data-side-pagination="server"
-               data-url="/examples/bootstrap_table/data"
-               data-response-handler="responseHandler">
-        </table>
-    </div>
-</div>
-
-<script>
-    var $table = $('#table'),
-        $remove = $('#remove'),
-        selections = [];
-
-    function initTable() {
-        $table.bootstrapTable({
-            height: getHeight(),
-            columns: [
-                [{ field: 'state', checkbox: true, rowspan: 2, align: 'center', valign: 'middle' },
-                 { title: 'Item ID', field: 'id', rowspan: 2, align: 'center', valign: 'middle', sortable: true, footerFormatter: totalTextFormatter},
-                 { title: 'Item Detail', colspan: 3, align: 'center'}
+        <table id="tb_departments"></table>
+    <script type="text/javascript">
+        function initTable() {
+            //先销毁表格
+            $('#tb_departments').bootstrapTable('destroy');
+            //初始化表格,动态从服务器加载数据
+            $("#tb_departments").bootstrapTable({
+                columns: [
+                    {field: "name", title: "序号", width: 10 },
+                    {field: "sex", title: "zidbh", width: 80 },
+                    {field: "age", title: "路段编码", width: 80, align: "center"}
                 ],
-                [
-                    {
-                        field: 'name',
-                        title: 'Item Name',
-                        sortable: true,
-                        editable: true,
-                        footerFormatter: totalNameFormatter,
-                        align: 'center'
-                    }, {
-                    field: 'price',
-                    title: 'Item Price',
-                    sortable: true,
-                    align: 'center',
-                    editable: {
-                        type: 'text',
-                        title: 'Item Price',
-                        validate: function (value) {
-                            value = $.trim(value);
-                            if (!value) {
-                                return 'This field is required';
-                            }
-                            if (!/^\$/.test(value)) {
-                                return 'This field needs to start width $.'
-                            }
-                            var data = $table.bootstrapTable('getData'),
-                                index = $(this).parents('tr').data('index');
-                            console.log(data[index]);
-                            return '';
-                        }
-                    },
-                    footerFormatter: totalPriceFormatter
-                }, {
-                    field: 'operate',
-                    title: 'Item Operate',
-                    align: 'center',
-                    events: operateEvents,
-                    formatter: operateFormatter
+                method: "get",  //使用get请求到服务器获取数据
+                url: window.webboot + "/login/gridTable", //获取数据的Servlet地址
+                striped: true,  //表格显示条纹
+                pagination: true, //启动分页
+                pageSize: 1,  //每页显示的记录数
+                pageNumber:1, //当前第几页
+                pageList: [5, 10, 15, 20, 25],  //记录数可选列表
+                search: false,  //是否启用查询
+                showColumns: true,  //显示下拉框勾选要显示的列
+                showRefresh: true,  //显示刷新按钮
+                sidePagination: "server", //表示服务端请求
+                //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder
+                //设置为limit可以获取limit, offset, search, sort, order
+                queryParamsType : "undefined",
+                dataField: "result",
+                queryParams: function queryParams(params) {   //设置查询参数
+                    var param = {
+                    };
+                    return param;
+                },
+                onLoadSuccess: function(){  //加载成功时执行
+                    //layer.msg("加载成功");
+                },
+                onLoadError: function(){  //加载失败时执行
+                    alert("shibai");
+                    //layer.msg("加载数据失败", {time : 1500, icon : 2});
                 }
-                ]
-            ]
-        });
-        // sometimes footer render error.
-        setTimeout(function () {
-            $table.bootstrapTable('resetView');
-        }, 200);
-        $table.on('check.bs.table uncheck.bs.table ' +
-            'check-all.bs.table uncheck-all.bs.table', function () {
-            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
-
-            // save your data, here just save the current page
-            selections = getIdSelections();
-            // push or splice the selections if you want to save all data selections
-        });
-        $table.on('expand-row.bs.table', function (e, index, row, $detail) {
-            if (index % 2 == 1) {
-                $detail.html('Loading from ajax request...');
-                $.get('LICENSE', function (res) {
-                    $detail.html(res.replace(/\n/g, '<br>'));
-                });
-            }
-        });
-        $table.on('all.bs.table', function (e, name, args) {
-            console.log(name, args);
-        });
-        $remove.click(function () {
-            var ids = getIdSelections();
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: ids
-            });
-            $remove.prop('disabled', true);
-        });
-        $(window).resize(function () {
-            $table.bootstrapTable('resetView', {
-                height: getHeight()
-            });
-        });
-    }
-
-    function getIdSelections() {
-        return $.map($table.bootstrapTable('getSelections'), function (row) {
-            return row.id
-        });
-    }
-
-    function responseHandler(res) {
-        $.each(res.rows, function (i, row) {
-            row.state = $.inArray(row.id, selections) !== -1;
-        });
-        return res;
-    }
-
-    function detailFormatter(index, row) {
-        var html = [];
-        $.each(row, function (key, value) {
-            html.push('<p><b>' + key + ':</b> ' + value + '</p>');
-        });
-        return html.join('');
-    }
-
-    function operateFormatter(value, row, index) {
-        return [
-            '<a class="like" href="javascript:void(0)" title="Like">',
-            '<i class="glyphicon glyphicon-heart"></i>',
-            '</a>  ',
-            '<a class="remove" href="javascript:void(0)" title="Remove">',
-            '<i class="glyphicon glyphicon-remove"></i>',
-            '</a>'
-        ].join('');
-    }
-
-    window.operateEvents = {
-        'click .like': function (e, value, row, index) {
-            alert('You click like action, row: ' + JSON.stringify(row));
-        },
-        'click .remove': function (e, value, row, index) {
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: [row.id]
             });
         }
-    };
 
-    function totalTextFormatter(data) {
-        return 'Total';
-    }
-
-    function totalNameFormatter(data) {
-        return data.length;
-    }
-
-    function totalPriceFormatter(data) {
-        var total = 0;
-        $.each(data, function (i, row) {
-            total += +(row.price.substring(1));
+        $(document).ready(function () {
+            //调用函数，初始化表格
+            initTable();
+            window.webboot = "${ctx}";
+            //当点击查询按钮的时候执行
+            $("#search").bind("click", initTable);
         });
-        return '$' + total;
-    }
-
-    function getHeight() {
-        return $(window).height() - $('h1').outerHeight(true);
-    }
-
-    $(function () {
-        var scripts = [
-                location.search.substring(1) || 'assets/bootstrap-table/src/bootstrap-table.js',
-                'assets/bootstrap-table/src/extensions/export/bootstrap-table-export.js',
-                'http://rawgit.com/hhurz/tableExport.jquery.plugin/master/tableExport.js',
-                'assets/bootstrap-table/src/extensions/editable/bootstrap-table-editable.js',
-                'http://rawgit.com/vitalets/x-editable/master/dist/bootstrap3-editable/js/bootstrap-editable.js'
-            ],
-            eachSeries = function (arr, iterator, callback) {
-                callback = callback || function () {};
-                if (!arr.length) {
-                    return callback();
-                }
-                var completed = 0;
-                var iterate = function () {
-                    iterator(arr[completed], function (err) {
-                        if (err) {
-                            callback(err);
-                            callback = function () {};
-                        }
-                        else {
-                            completed += 1;
-                            if (completed >= arr.length) {
-                                callback(null);
-                            }
-                            else {
-                                iterate();
-                            }
-                        }
-                    });
-                };
-                iterate();
-            };
-
-        eachSeries(scripts, getScript, initTable);
-    });
-
-    function getScript(url, callback) {
-        var head = document.getElementsByTagName('head')[0];
-        var script = document.createElement('script');
-        script.src = url;
-
-        var done = false;
-        // Attach handlers for all browsers
-        script.onload = script.onreadystatechange = function() {
-            if (!done && (!this.readyState ||
-                this.readyState == 'loaded' || this.readyState == 'complete')) {
-                done = true;
-                if (callback)
-                    callback();
-
-                // Handle memory leak in IE
-                script.onload = script.onreadystatechange = null;
-            }
-        };
-
-        head.appendChild(script);
-
-        // We handle everything using the script element injection
-        return undefined;
-    }
-</script>
+    </script>
+</div>
 </body>
 </html>
-
